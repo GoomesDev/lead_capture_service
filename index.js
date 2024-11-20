@@ -2,6 +2,7 @@ require("dotenv").config()
 const bodyParser = require("body-parser")
 var sendpulse = require("sendpulse-api")
 const express = require("express")
+const cors = require("cors")
 
 const app = express()
 const IP_ADRESS = process.env.IP_ADRESS
@@ -12,10 +13,11 @@ const API_SECRET = process.env.API_CLIENT_SECRET
 const TOKEN_STORAGE = "/tmp/"
 
 app.use(bodyParser.json())
+app.use(cors())
 
 sendpulse.init(API_USER_ID, API_SECRET, TOKEN_STORAGE)
 
-app.post("/add-emails", async (req, res) => {
+app.post('/add-emails', async (req, res) => {
     try {
         const { emails } = req.body
 
