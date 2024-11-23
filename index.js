@@ -74,6 +74,32 @@ app.post('/add-emails', async (req, res) => {
     }
 })
 
+app.get('/total-subs', async (req, res) => {
+    try {
+        const addressBooks = await new Promise((resolve, reject) => {
+            sendpulse.listAddressBooks((response) => {
+                if (!response || response.is_error) {
+                    return reject("Error listing Address Books: " + JSON.stringify(response))
+                }
+                resolve(response)
+            })
+        })
+
+        if (!addressBooks || addressBooks.length === 0) {
+            return res.status(404).json({ error: "No Address Books found." })
+        }
+
+        const total_subs = addressBooks.reduce((sum, book) => sum + book.all_email_qty, 0)
+
+        console.log("Total Subscribers:", total_subs)
+
+        res.status(200).json({ total_subs })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: error.toString() })
+    }
+})
+
 app.listen(PORT, IP_ADRESS,() => {
     console.log(`Server running on ${IP_ADRESS}:${PORT}`)
 })
